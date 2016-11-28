@@ -1,5 +1,7 @@
 'use strict';
 
+const cookie = require('cookie');
+
 const auth = require('./auth');
 const session = require('./session');
 
@@ -18,7 +20,15 @@ module.exports = {
     });
   },
   get: (event, context) => {
-    const cookie = event.headers ? event.headers.Cookie : '';
-    
+    const cookieStr = event.headers ? (event.headers.Cookie || '') : '';
+    const cookies = cookie.parse(cookieStr);
+    session.get(cookies).then((sessionRes) => {
+      if (sessionRes) {
+        // authenticated
+
+      } else {
+        
+      }
+    });
   }
 };

@@ -1,0 +1,13 @@
+{
+  "name": "lambda-session-auth",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sedenardi/lambda-session-auth.git"
+  },
+  "author": "Sanders DeNardi",
+  "homepage": "https://github.com/sedenardi/lambda-session-auth#readme",
+  "dependencies": {
+    "cookie": "^0.3.1"
+  }
+}

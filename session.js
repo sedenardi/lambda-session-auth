@@ -5,16 +5,22 @@ const cookiePrefix = 'Session::';
 
 module.exports = {
   set: (user) => {
-    const sessionId = `${cookiePrefix}${user}`;
-    const newCookie = `${cookieKey}=${sessionId}`;
-    return { Cookie: newCookie };
+    return new Promise((resolve, reject) => {
+      const sessionId = `${cookiePrefix}${user}`;
+      const newCookie = `${cookieKey}=${sessionId}`;
+      return resolve({ Cookie: newCookie });
+    });
   },
-  get: (sessionId) => {
-    const user = sessionId.replace(cookiePrefix, '');
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
+  get: (cookies) => {
+    return new Promise((resolve, reject) => {
+      if (!cookies[cookieKey]) {
+        return resolve(false);
+      }
+      const user = cookies[cookieKey].replace(cookiePrefix, '');
+      if (!user) {
+        return resolve(false);
+      }
+      return resolve(true);
+    });
   }
 };
