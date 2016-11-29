@@ -1,47 +1,55 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Login</title>
+  </head>
   <body>
     <h2>Login</h2>
-    <div>
-      <label>Username:</label>
-      <input type="text" name="username" id="username"/>
-    </div>
-    <div>
-      <label>Password:</label>
-      <input type="password" name="password" id="password"/>
-    </div>
-    <div>
-      <span id="result"></span>
-    </div>
-    <div>
-      <button id="submit">Log In</button>
-    </div>
+    <form id="loginForm" action="POST">
+      <div>
+        <label>Username:</label>
+        <input type="text" name="username" id="username"/>
+      </div>
+      <div>
+        <label>Password:</label>
+        <input type="password" name="password" id="password"/>
+      </div>
+      <div>
+        <span id="result"></span>
+      </div>
+      <div>
+        <input type="submit" value="Log In" />
+      </div>
+    </form>
     <script>
-      var post = function() {
+      var post = function(event) {
+        event.preventDefault();
         var data = {
           username: document.getElementById('username').value,
           password: document.getElementById('password').value
         };
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function() {
-          if (req.readyState == XMLHttpRequest.DONE ) {
-             if (req.status == 200) {
-               var res = JSON.parse(req.responseText);
-               if (res.Success) {
-                 location.reload();
-               } else {
-                 document.getElementById('result').innerHTML = res.message;
-               }
-             } else {
-               document.getElementById('result').innerHTML = 'Unknown error.';
-             }
+        fetch('', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin'
+        }).then(function(response) {
+          if (response.status === 200) {
+            response.json().then(function(res) {
+              if (res.success) {
+                location.reload();
+              } else {
+                document.getElementById('result').innerHTML = res.message;
+              }
+            });
+          } else {
+            document.getElementById('result').innerHTML = 'Unknown error.';
           }
-        };
-        req.open('POST', '', true);
-        req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-        req.send(JSON.stringify(data));
-      }
-      document.getElementById('submit').addEventListener('click', post);
+        }).catch(function(error) {
+          document.getElementById('result').innerHTML = error.message;
+        });
+      };
+      document.getElementById('loginForm').addEventListener('submit', post);
     </script>
   </body>
 </html>

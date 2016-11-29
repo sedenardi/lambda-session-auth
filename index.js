@@ -13,7 +13,7 @@ module.exports = {
     const user = event.data.username;
     const pass = event.data.password;
     const authRes = authentication.auth(user, pass);
-    if (authRes) {
+    if (authRes.success) {
       const cookie = session.set(user);
       return context.done(null, Object.assign(authRes, cookie));
     } else {
