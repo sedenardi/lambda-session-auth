@@ -8,13 +8,13 @@ const loginPath = path.resolve(__dirname, './login.html');
 const userPath = path.resolve(__dirname, './user.html');
 
 module.exports = {
-  login: function(cb) {
+  login: (cb) => {
     fs.readFile(loginPath, (err, res) => {
       if (err) { return cb(err); }
       return cb(null, res.toString());
     });
   },
-  user: function(opts, cb) {
+  user: (opts, cb) => {
     fs.readFile(userPath, (err, res) => {
       if (err) { return cb(err); }
       const compiled = template(res.toString());

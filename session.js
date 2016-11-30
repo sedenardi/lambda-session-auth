@@ -7,7 +7,7 @@ const cookieKey = 'SID';
 const cookiePrefix = 'Session::';
 
 module.exports = {
-  get: (headers) => {
+  getSession: (headers) => {
     const cookieStr = headers ? (headers.Cookie || '') : '';
     const cookies = cookie.parse(cookieStr);
     if (!cookies[cookieKey]) {
@@ -20,16 +20,13 @@ module.exports = {
       user: user
     };
   },
-  set: (user) => {
+  setSession: (user) => {
     const sessionId = `${cookiePrefix}${user.username}`;
-    const newCookie = `${cookieKey}=${sessionId}`;
+    const newCookie = cookie.serialize(cookieKey, sessionId);
     return { Cookie: newCookie };
   },
-  destroy: (user) => {
-    // invalidate sessionId if user exists
-    const clearCookie = cookie.serialize(cookieKey, 'empty', {
-      maxAge: 0
-    })
+  destroySession: (user) => {
+    const clearCookie = cookie.serialize(cookieKey, 'empty', { maxAge: 0 });
     return { Cookie: clearCookie };
   }
 };
