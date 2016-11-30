@@ -28,7 +28,7 @@
           username: document.getElementById('username').value,
           password: document.getElementById('password').value
         };
-        fetch('', {
+        fetch('./login', {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
@@ -43,7 +43,7 @@
               }
             });
           } else {
-            document.getElementById('result').innerHTML = 'Unknown error.';
+            document.getElementById('result').innerHTML = response.statusText;
           }
         }).catch(function(error) {
           document.getElementById('result').innerHTML = error.message;

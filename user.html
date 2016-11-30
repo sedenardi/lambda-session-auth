@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User</title>
+  </head>
+  <body>
+    <h2>Logged In</h2>
+    <div>
+      <strong>Username: </strong>
+      <span><%= username %></span>
+    </div>
+    <div>
+      <strong>First Name: </strong>
+      <span><%= first %></span>
+    </div>
+    <div>
+      <strong>Last Name: </strong>
+      <span><%= last %></span>
+    </div>
+    <div>
+      <span id="result"></span>
+    </div>
+    <form id="logoutForm" action="POST">
+      <input type="submit" value="Log Out" />
+    </form>
+    <% if (true) { %>
+    <script type="text/javascript">
+      var post = function(event) {
+        event.preventDefault();
+        fetch('./logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin'
+        }).then(function(res) {
+          if (res.status === 200) {
+            location.reload();
+          } else {
+            document.getElementById('result').innerHTML = ('Status: ' + res.statusText);
+          }
+        }).catch(function(error) {
+          document.getElementById('result').innerHTML = error.message;
+        });
+      };
+      document.getElementById('logoutForm').addEventListener('submit', post);
+    </script>
+    <% } %>
+  </body>
+</html>

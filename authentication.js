@@ -1,20 +1,17 @@
 'use strict';
 
-const users = {
-  user1: 'pass1',
-  user2: 'pass2'
-};
+const users = require('./users');
 
 module.exports = {
-  auth: (user, pass) => {
-    if (!user || !pass) {
+  auth: (username, pass) => {
+    if (!username || !pass) {
       return { success: false, message: 'Must provide username and password.' };
-    } else if (!users[user]) {
+    } else if (!users[username]) {
       return { success: false, message: 'User doesn\'t exist.' };
-    } else if (users[user] !== pass) {
+    } else if (users[username].pass !== pass) {
       return { success: false, message: 'Incorrect password.' };
     } else {
-      return { success: true };
+      return { success: true, user: users[username] };
     }
   }
 };

@@ -1,37 +1,54 @@
 'use strict';
 
-const cookie = require('cookie');
 const fs = require('fs');
 const path = require('path');
+const template = require('lodash.template');
+
 const authentication = require('./authentication');
 const session = require('./session');
 
 const loginPath = path.resolve(__dirname, './login.html');
+const userPath = path.resolve(__dirname, './user.html');
 
 module.exports = {
-  post: (event, context) => {
-    const user = event.data.username;
-    const pass = event.data.password;
-    const authRes = authentication.auth(user, pass);
-    if (authRes.success) {
-      const cookie = session.set(user);
-      return context.done(null, Object.assign(authRes, cookie));
-    } else {
-      return context.done(null, authRes)
-    }
-  },
   get: (event, context) => {
-    const cookieStr = event.headers ? (event.headers.Cookie || '') : '';
-    const cookies = cookie.parse(cookieStr);
-    const sessionRes = session.get(cookies);
+    const sessionRes = session.get(event.headers);
     if (sessionRes.valid) {
-      // authenticated
-      return context.done(null, `Logged in as: ${sessionRes.user}`)
+      fs.readFile(userPath, (err, res) => {
+        if (err) { return context.done(err); }
+        const compiled = template(res.toString());
+        console.log(res.toString());
+        const body = compiled({
+          username: sessionRes.user.username,
+          first: sessionRes.user.first,
+          last: sessionRes.user.last
+        });
+        return context.done(null, body);
+      });
     } else {
       fs.readFile(loginPath, (err, res) => {
         if (err) { return context.done(err); }
         return context.done(null, res.toString());
       });
     }
+  },
+  login: (event, context) => {
+    const username = event.data.username;
+    const pass = event.data.password;
+    const authRes = authentication.auth(username, pass);
+    if (authRes.success) {
+      const sess = session.set(authRes.user);
+      return context.done(null, {
+        success: authRes.success,
+        Cookie: sess.Cookie
+      });
+    } else {
+      return context.done(null, authRes)
+    }
+  },
+  logout: (event, context) => {
+    const sessionRes = session.get(event.headers);
+    const sess = session.destroy(sessionRes.user);
+    context.done(null, { Cookie: sess.Cookie });
   }
 };
